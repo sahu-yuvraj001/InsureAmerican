@@ -1,9 +1,52 @@
 // src/pages/Contact.jsx
-import React from "react";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    message: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [responseMsg, setResponseMsg] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setResponseMsg("");
+
+    console.log("Form submitted:", formData);
+    try {
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/posts",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const data = await response.json();
+      console.log("Success:", data);
+      toast.success("Form submitted successfully! 🎉");
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Something went wrong. Please try again!");
+    }
+  };
   return (
     <>
+     <ToastContainer position="top-center" autoClose={3000} />
       <Helmet>
         <title>Contact Us | Insure American</title>
         <meta
@@ -32,7 +75,10 @@ const Contact = () => {
           {/* Contact Grid */}
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             {/* Contact Form */}
-            <form className="relative bg-white/70 backdrop-blur-lg shadow-2xl rounded-2xl p-10 space-y-6 border border-gray-200 hover:shadow-blue-100 transition duration-500  max-w-lg mx-auto w-full">
+            <form
+              onSubmit={handleSubmit}
+              className="relative bg-white/70 backdrop-blur-lg shadow-2xl rounded-2xl p-10 space-y-6 border border-gray-200 hover:shadow-blue-100 transition duration-500  max-w-lg mx-auto w-full"
+            >
               <div>
                 <label className="block text-gray-800 font-semibold mb-2">
                   Full Name
@@ -40,8 +86,11 @@ const Contact = () => {
                 <div className="flex items-center border rounded-lg px-4 py-3 bg-white focus-within:ring-2 focus-within:ring-blue-500 transition duration-300">
                   <input
                     type="text"
+                    name="fullName"
                     placeholder="John Doe"
                     required
+                    value={formData.fullName}
+                    onChange={handleChange}
                     className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400"
                   />
                 </div>
@@ -54,8 +103,11 @@ const Contact = () => {
                 <div className="flex items-center border rounded-lg px-4 py-3 bg-white focus-within:ring-2 focus-within:ring-blue-500 transition duration-300">
                   <input
                     type="email"
+                    name="email"
                     placeholder="you@example.com"
                     required
+                    value={formData.email}
+                    onChange={handleChange}
                     className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400"
                   />
                 </div>
@@ -68,8 +120,11 @@ const Contact = () => {
                 <div className="relative">
                   <textarea
                     placeholder="Write your message..."
+                    name="message"
                     rows="4"
                     required
+                    value={formData.message}
+                    onChange={handleChange}
                     className="w-full border rounded-lg px-4 py-3 bg-white focus:ring-2 focus:ring-blue-500 outline-none resize-none text-gray-700 placeholder-gray-400 transition duration-300"
                   ></textarea>
                   <div className="absolute bottom-3 right-3 text-blue-400 text-sm">
@@ -80,11 +135,18 @@ const Contact = () => {
 
               <button
                 type="submit"
+                disabled={loading}
                 className="w-full py-3 rounded-lg font-semibold text-white bg-linear-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 active:scale-95 transition duration-300 shadow-md hover:shadow-blue-200"
               >
-                🚀 Send Message
+                {loading ? "⏳ Sending..." : "🚀 Send Message"}
               </button>
+              {responseMsg && (
+                <p className="text-center text-sm text-gray-700">
+                  {responseMsg}
+                </p>
+              )}
             </form>
+           
 
             {/* Contact Info */}
             <div className="space-y-8 max-w-lg mx-auto lg:mx-0">

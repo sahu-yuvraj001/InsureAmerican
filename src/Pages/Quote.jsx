@@ -1,16 +1,70 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 export default function GetQuote() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    insuranceType: "",
+    zipCode: "",
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSubmitted(true);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    console.log("Form submitted:", formData);
+
+    try {
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/posts",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const data = await response.json();
+      console.log("Success:", data);
+
+      toast.success("Form submitted successfully! 🎉", {
+        position: "top-center",
+      });
+
+      setSubmitted(true);
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        insuranceType: "",
+        zipCode: "",
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Something went wrong. Please try again!", {
+        position: "top-center",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <>
+       <ToastContainer position="top-center" autoClose={3000} />
       <Helmet>
         <title>Get a Free Insurance Quote | Insure American</title>
         <meta
@@ -67,7 +121,10 @@ export default function GetQuote() {
                       </label>
                       <input
                         type="text"
+                        name="fullName"
                         placeholder="John Doe"
+                        value={formData.fullName}
+                        onChange={handleChange}
                         required
                         className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
                       />
@@ -79,6 +136,9 @@ export default function GetQuote() {
                       </label>
                       <input
                         type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
                         placeholder="you@example.com"
                         required
                         className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
@@ -93,8 +153,11 @@ export default function GetQuote() {
                       </label>
                       <input
                         type="tel"
+                        name="phone"
                         placeholder="+1 (555) 123-4567"
                         required
+                        value={formData.phone}
+                        onChange={handleChange}
                         className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
                       />
                     </div>
@@ -105,6 +168,9 @@ export default function GetQuote() {
                       </label>
                       <select
                         required
+                        name="insuranceType"
+                        value={formData.insuranceType}
+                        onChange={handleChange}
                         className="w-full px-4 py-3 border rounded-lg text-gray-600 focus:ring-2 focus:ring-blue-500 outline-none transition"
                       >
                         <option value="">Select...</option>
@@ -122,8 +188,11 @@ export default function GetQuote() {
                     </label>
                     <input
                       type="text"
+                      name="zipCode"
                       placeholder="Enter ZIP Code"
                       required
+                      value={formData.zipCode}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
                     />
                   </div>

@@ -3,7 +3,7 @@ const services = [
   {
     title: "Medicare Plans",
     desc: "Simplify your Medicare choices and find the right coverage for your needs.",
-    icon: "💙",
+    icon: "❤️",
   },
   {
     title: "ACA Health Insurance",

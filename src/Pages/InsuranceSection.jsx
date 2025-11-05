@@ -4,6 +4,7 @@ import { HiArrowRight } from "react-icons/hi";
 import familypic from "../assets/family.jpg";
 import businesspic from "../assets/business.jpg";
 import healthpic from "../assets/health.jpg";
+import { Link } from "react-router-dom";
 
 const services = [
   {
@@ -67,12 +68,14 @@ export default function InsuranceSection() {
 
                 {/* Arrow Button */}
                 <div className="absolute right-6 bottom-6">
+                <Link to="/services" className="hover:opacity-80 transition">
                   <button
                     aria-label={`Learn more about ${service.title}`}
                     className="bg-blue-600 text-white p-3 rounded-xl transition-all duration-500 hover:bg-blue-700 hover:scale-110 hover:shadow-lg"
                   >
                     <HiArrowRight className="text-xl" />
                   </button>
+                  </Link>
                 </div>
               </div>
             </div>

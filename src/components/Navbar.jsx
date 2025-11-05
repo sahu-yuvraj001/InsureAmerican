@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -18,7 +19,9 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3 md:py-4">
         {/* Logo */}
         <h1 className="text-xl sm:text-2xl font-bold text-blue-600 tracking-wide">
+          <Link to="/" className="hover:opacity-80 transition">
           Insure<span className="text-gray-900">American</span>
+          </Link>
         </h1>
 
         {/* Desktop Links */}
